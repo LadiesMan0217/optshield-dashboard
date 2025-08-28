@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* OptiShield Design System */
+  --bg-primary: #0f172a; /* slate-900 - Fundo principal mais sofisticado */
+  --bg-secondary: #1e293b; /* slate-800 - Fundo de componentes */
+  --bg-tertiary: #334155; /* slate-700 - Bordas e elementos sutis */
+  
+  /* Brand Colors */
+  --brand-primary: #3b82f6; /* blue-500 - Azul OptiShield */
+  --brand-secondary: #1d4ed8; /* blue-700 - Azul mais escuro */
+  
+  /* Semantic Colors */
+  --success: #10b981; /* emerald-500 - Verde para positivo */
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --danger: #ef4444; /* red-500 - Vermelho para negativo */
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --warning: #f59e0b; /* amber-500 - Amarelo para neutro/risco */
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --info: #0ea5e9; /* sky-500 - Azul informativo */
+  --info-bg: rgba(14, 165, 233, 0.1);
+  
+  /* Text Colors */
+  --text-primary: #ffffff; /* Títulos */
+  --text-secondary: #cbd5e1; /* slate-300 - Subtítulos */
+  --text-tertiary: #94a3b8; /* slate-400 - Texto secundário */
+  --text-muted: #64748b; /* slate-500 - Texto desabilitado */
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-primary);
+}
+
+/* Calendar specific styles */
+.calendar-day {
+  width: 100%;
+  height: 4rem;
+  border: 1px solid var(--bg-tertiary);
+  background-color: var(--bg-secondary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  border-radius: 0.5rem;
+}
+
+.calendar-day:hover {
+  border-color: var(--brand-primary);
+  transform: translateY(-1px);
+}
+
+.calendar-day.win {
+  background-color: var(--success-bg);
+  border-color: var(--success);
+}
+
+.calendar-day.loss {
+  background-color: var(--danger-bg);
+  border-color: var(--danger);
+}
+
+.calendar-day.mixed {
+  background-color: var(--warning-bg);
+  border-color: var(--warning);
+}
+
+/* Value pills for calendar */
+.value-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.value-pill.positive {
+  background-color: var(--success);
+}
+
+.value-pill.negative {
+  background-color: var(--danger);
+}
+
+.value-pill.neutral {
+  background-color: var(--warning);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Typography Hierarchy */
+.text-display {
+  font-size: 3rem; /* 48px */
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.text-h1 {
+  font-size: 2.25rem; /* 36px */
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.text-h2 {
+  font-size: 1.875rem; /* 30px */
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.text-h3 {
+  font-size: 1.5rem; /* 24px */
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.text-h4 {
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.text-h5 {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.text-body-lg {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.text-body {
+  font-size: 1rem; /* 16px */
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.text-body-sm {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.text-caption {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1.4;
+  font-weight: 400;
+  letter-spacing: 0.025em;
+}
+
+.text-overline {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* KPI Values */
+.text-kpi-large {
+  font-size: 3rem; /* 48px */
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.text-kpi-medium {
+  font-size: 2rem; /* 32px */
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.text-kpi-small {
+  font-size: 1.5rem; /* 24px */
+  line-height: 1;
+  font-weight: 600;
+}
+
+/* Floating Action Button Enhancements */
+.fab-glow {
+  position: relative;
+}
+
+.fab-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fab-glow:hover::before {
+  opacity: 1;
+}
+
+/* Navigation Active State Enhancement */
+.nav-active-indicator {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-active-indicator::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-active-indicator:hover::before {
+  left: 100%;
+}
