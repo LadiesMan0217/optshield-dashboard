@@ -37,18 +37,9 @@ export const ExpandableMenu: React.FC<ExpandableMenuProps> = ({
       }
     },
     {
-      id: 'deposits',
-      icon: PiggyBank,
-      label: 'Depósitos',
-      action: () => {
-        onTabChange?.('deposits');
-        onClose();
-      }
-    },
-    {
       id: 'balance-manager',
       icon: Wallet,
-      label: 'Gerenciar Saldo',
+      label: 'Gerenciar Caixa',
       action: () => {
         onOpenBalanceManager?.();
         onClose();

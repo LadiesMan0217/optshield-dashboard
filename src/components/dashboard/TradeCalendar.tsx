@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, TrendingUp, TrendingDown, Grid } from 'lucide-react';
+import { Calendar, TrendingUp, TrendingDown, Grid, BarChart3, Percent, Target } from 'lucide-react';
 import { Trade } from '../../types';
 import { formatCurrency } from '../../utils';
 
@@ -22,13 +22,7 @@ interface TradeDayProps {
   classNames: string;
   day: TradeDayType;
   onHover: (day: string | null) => void;
-}
-
-interface TradeDayProps {
-  classNames: string;
-  day: TradeDayType;
-  onHover: (day: string | null) => void;
-  onClick?: (day: TradeDayType) => void;
+  onClick?: (day: TradeDayType, event?: React.MouseEvent) => void;
 }
 
 const TradeDay: React.FC<TradeDayProps> = ({ classNames, day, onHover, onClick }) => {
@@ -50,9 +44,7 @@ const TradeDay: React.FC<TradeDayProps> = ({ classNames, day, onHover, onClick }
   return (
     <>
       <motion.div
-        className={`relative flex items-center justify-center py-1 ${getBackgroundColor()} ${
-          hasData ? 'cursor-pointer hover:scale-105' : ''
-        } transition-all duration-200 shadow-lg`}
+        className={`relative flex items-center justify-center py-1 ${getBackgroundColor()} cursor-pointer transition-all duration-200 shadow-lg`}
         style={{ 
           height: '4rem', 
           borderRadius: 16,
@@ -63,17 +55,21 @@ const TradeDay: React.FC<TradeDayProps> = ({ classNames, day, onHover, onClick }
               : hasLoss
               ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(153, 27, 27, 0.6) 100%), linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%)'
               : 'linear-gradient(135deg, rgba(113, 113, 122, 0.8) 0%, rgba(63, 63, 70, 0.6) 100%), linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%)'
-            : undefined,
+            : isHovered 
+              ? 'linear-gradient(135deg, rgba(63, 63, 70, 0.6) 0%, rgba(39, 39, 42, 0.4) 100%), linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%)'
+              : undefined,
           boxShadow: hasData 
             ? isProfitable
               ? '0 4px 20px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
               : hasLoss
               ? '0 4px 20px rgba(239, 68, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
               : '0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-            : undefined
+            : isHovered
+              ? '0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+              : undefined
         }}
-        whileHover={hasData ? { scale: 1.05, y: -2 } : {}}
-        whileTap={hasData ? { scale: 0.98 } : {}}
+        whileHover={{ scale: 1.02, y: -1 }}
+        whileTap={{ scale: 0.98 }}
         onMouseEnter={() => {
           setIsHovered(true);
           onHover(day.day);
@@ -82,7 +78,7 @@ const TradeDay: React.FC<TradeDayProps> = ({ classNames, day, onHover, onClick }
           setIsHovered(false);
           onHover(null);
         }}
-        onClick={() => hasData && onClick?.(day)}
+        onClick={(event) => onClick?.(day, event)}
         id={`day-${day.day}`}
       >
         {/* Número do dia */}
@@ -167,7 +163,7 @@ const TradeDay: React.FC<TradeDayProps> = ({ classNames, day, onHover, onClick }
 const TradeCalendarGrid: React.FC<{ 
   days: TradeDayType[];
   onHover: (day: string | null) => void;
-  onDayClick?: (day: TradeDayType) => void;
+  onDayClick?: (day: TradeDayType, event?: React.MouseEvent) => void;
 }> = ({ days, onHover, onDayClick }) => {
   return (
     <div className="grid grid-cols-7 gap-2">
@@ -189,7 +185,7 @@ interface TradeCalendarProps {
   currentDate: Date;
   onMonthNavigate: (direction: 'prev' | 'next') => void;
   selectedPeriod?: 'weekly' | 'biweekly' | 'monthly';
-  onDayClick?: (day: TradeDayType) => void;
+  onDayClick?: (day: TradeDayType, event?: React.MouseEvent) => void;
 }
 
 export const TradeCalendar: React.FC<TradeCalendarProps> = ({
@@ -206,9 +202,9 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
     setHoveredDay(day);
   };
 
-  const handleDayClick = (day: TradeDayType) => {
+  const handleDayClick = (day: TradeDayType, event?: React.MouseEvent) => {
     if (onDayClick) {
-      onDayClick(day);
+      onDayClick(day, event);
     } else {
       // Comportamento padrão: abrir visualização de detalhes
       setDetailsView(true);
@@ -221,6 +217,8 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
     if (!currentDate) return [];
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
+    
+
     
     // Primeiro dia do mês e último dia
     const firstDay = new Date(year, month, 1);
@@ -246,6 +244,8 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       const dayTrades = trades.filter(trade => trade.date === dateStr);
+      
+
       
               const tradeInfo = dayTrades.map(trade => ({
           id: trade.id,
@@ -278,14 +278,10 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
     return days;
   }, [trades, currentDate]);
 
-  const sortedDays = useMemo(() => {
-    if (!hoveredDay) return calendarDays;
-    return [...calendarDays].sort((a, b) => {
-      if (a.day === hoveredDay) return -1;
-      if (b.day === hoveredDay) return 1;
-      return 0;
-    });
-  }, [calendarDays, hoveredDay]);
+  // Filtrar apenas os dias que têm trades para exibir na seção "Trades do Mês"
+  const daysWithTrades = useMemo(() => {
+    return calendarDays.filter(day => day.tradeInfo && day.tradeInfo.length > 0);
+  }, [calendarDays]);
 
   const monthNames = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -381,8 +377,134 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
                 </p>
               </div>
               
+              {/* Resumo Mensal */}
+              {(() => {
+                const monthTrades = trades.filter(trade => {
+                  const tradeDate = new Date(trade.date);
+                  return tradeDate.getMonth() === currentDate.getMonth() && 
+                         tradeDate.getFullYear() === currentDate.getFullYear();
+                });
+                
+
+                
+                const totalProfit = monthTrades.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0);
+                const wins = monthTrades.filter(trade => trade.result === 'win').length;
+                const losses = monthTrades.filter(trade => trade.result === 'loss').length;
+                const winRate = monthTrades.length > 0 ? (wins / monthTrades.length) * 100 : 0;
+                const totalVolume = monthTrades.reduce((sum, trade) => sum + (trade.entry_value || 0), 0);
+                const averagePayout = monthTrades.length > 0 ? monthTrades.reduce((sum, trade) => sum + trade.payout, 0) / monthTrades.length : 0;
+                
+                const fixedHandTrades = monthTrades.filter(trade => trade.tradeType === 'fixed_hand');
+                const sorosTrades = monthTrades.filter(trade => trade.tradeType === 'soros');
+                
+                return monthTrades.length > 0 ? (
+                  <motion.div 
+                    className="w-full bg-zinc-800/30 rounded-lg p-4 mb-4"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {/* Métricas Principais */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                      <div className="bg-zinc-800/50 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          {totalProfit >= 0 ? (
+                            <TrendingUp className="w-4 h-4 text-green-400" />
+                          ) : (
+                            <TrendingDown className="w-4 h-4 text-red-400" />
+                          )}
+                          <span className="text-zinc-400 text-xs">Resultado</span>
+                        </div>
+                        <div className={`font-bold text-sm ${
+                          totalProfit >= 0 ? 'text-green-400' : 'text-red-400'
+                        }`}>
+                          {formatCurrency(totalProfit)}
+                        </div>
+                        <div className="text-zinc-500 text-xs">
+                          {monthTrades.length} trade{monthTrades.length !== 1 ? 's' : ''}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-zinc-800/50 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Target className="w-4 h-4 text-blue-400" />
+                          <span className="text-zinc-400 text-xs">Taxa de Acerto</span>
+                        </div>
+                        <div className="text-white font-bold text-sm">
+                          {winRate.toFixed(1)}%
+                        </div>
+                        <div className="text-zinc-500 text-xs">
+                          {wins}W / {losses}L
+                        </div>
+                      </div>
+                      
+                      <div className="bg-zinc-800/50 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <BarChart3 className="w-4 h-4 text-purple-400" />
+                          <span className="text-zinc-400 text-xs">Volume</span>
+                        </div>
+                        <div className="text-white font-bold text-sm">
+                          {formatCurrency(totalVolume)}
+                        </div>
+                        <div className="text-zinc-500 text-xs">
+                          Média: {formatCurrency(monthTrades.length > 0 ? totalVolume / monthTrades.length : 0)}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-zinc-800/50 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Percent className="w-4 h-4 text-yellow-400" />
+                          <span className="text-zinc-400 text-xs">Payout Médio</span>
+                        </div>
+                        <div className="text-white font-bold text-sm">
+                          {averagePayout.toFixed(1)}%
+                        </div>
+                        <div className="text-zinc-500 text-xs">
+                          {monthTrades.length > 0 ? `${Math.min(...monthTrades.map(t => t.payout))}% - ${Math.max(...monthTrades.map(t => t.payout))}%` : '-'}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Breakdown por Tipo */}
+                    {(fixedHandTrades.length > 0 || sorosTrades.length > 0) && (
+                      <div className="grid grid-cols-2 gap-3">
+                        {fixedHandTrades.length > 0 && (
+                          <div className="bg-zinc-800/30 rounded-lg p-3">
+                            <div className="text-zinc-400 text-xs mb-1">Mão Fixa</div>
+                            <div className="text-white font-semibold text-sm">
+                              {fixedHandTrades.length} trade{fixedHandTrades.length !== 1 ? 's' : ''}
+                            </div>
+                            <div className={`text-xs font-medium ${
+                              fixedHandTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0) >= 0 
+                                ? 'text-green-400' : 'text-red-400'
+                            }`}>
+                              {formatCurrency(fixedHandTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {sorosTrades.length > 0 && (
+                          <div className="bg-zinc-800/30 rounded-lg p-3">
+                            <div className="text-zinc-400 text-xs mb-1">Soros</div>
+                            <div className="text-white font-semibold text-sm">
+                              {sorosTrades.length} trade{sorosTrades.length !== 1 ? 's' : ''}
+                            </div>
+                            <div className={`text-xs font-medium ${
+                              sorosTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0) >= 0 
+                                ? 'text-green-400' : 'text-red-400'
+                            }`}>
+                              {formatCurrency(sorosTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                ) : null;
+              })()}
+              
               <motion.div
-                className="flex h-[500px] flex-col items-start justify-start overflow-hidden overflow-y-scroll rounded-xl border border-zinc-700 bg-zinc-900/50 shadow-lg"
+                className="flex h-[400px] flex-col items-start justify-start overflow-hidden overflow-y-scroll rounded-xl border border-zinc-700 bg-zinc-900/50 shadow-lg"
                 layout
               >
                 <AnimatePresence>
@@ -422,7 +544,7 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
                                 
                                 <div className="flex items-center gap-2 mb-2">
                                   <h3 className="text-lg font-semibold text-white">
-                                    {trade.tradeType === 'soros' ? 'Soros' : 'Fixed Hand'}
+                                    {trade.tradeType === 'soros' ? 'Soros' : 'Mão fixa'}
                                   </h3>
                                   <span className="text-sm text-zinc-400">
                                     Payout: {trade.payout}%

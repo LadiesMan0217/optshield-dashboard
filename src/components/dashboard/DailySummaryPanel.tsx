@@ -1,18 +1,18 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { TrendingUp, TrendingDown, Plus, Calendar } from 'lucide-react';
+import { TrendingUp, TrendingDown, Plus, Calendar, Target, DollarSign, Percent, BarChart3 } from 'lucide-react';
 import { Trade } from '../../types';
 import { formatCurrency } from '../../utils';
 
-interface DailyHistoryPanelProps {
+interface DailySummaryPanelProps {
   selectedDate: string | null;
   trades: Trade[];
   onClose: () => void;
   onAddTrade: (date: string) => void;
 }
 
-export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
+export const DailySummaryPanel: React.FC<DailySummaryPanelProps> = ({
   selectedDate,
   trades,
   onClose,
@@ -25,19 +25,31 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
   const wins = dayTrades.filter(trade => trade.result === 'win').length;
   const losses = dayTrades.filter(trade => trade.result === 'loss').length;
   const winRate = dayTrades.length > 0 ? (wins / dayTrades.length) * 100 : 0;
+  
+  // Métricas adicionais
+  const totalVolume = dayTrades.reduce((sum, trade) => sum + (trade.entry_value || 0), 0);
+  const averageEntry = dayTrades.length > 0 ? totalVolume / dayTrades.length : 0;
+  const averagePayout = dayTrades.length > 0 ? dayTrades.reduce((sum, trade) => sum + trade.payout, 0) / dayTrades.length : 0;
+  const bestTrade = dayTrades.length > 0 ? Math.max(...dayTrades.map(t => t.profitLoss || 0)) : 0;
+  const worstTrade = dayTrades.length > 0 ? Math.min(...dayTrades.map(t => t.profitLoss || 0)) : 0;
+  
+  // Separar trades por tipo
+  const fixedHandTrades = dayTrades.filter(trade => trade.tradeType === 'fixed_hand');
+  const sorosTrades = dayTrades.filter(trade => trade.tradeType === 'soros');
 
-  const formattedDate = format(parseISO(selectedDate), "d 'de' MMMM 'de' yyyy", { locale: ptBR });
+  const formattedDate = format(parseISO(selectedDate), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR });
+  const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
   return (
-    <div className="w-full max-w-lg bg-zinc-900/95 backdrop-blur-sm border border-zinc-700 rounded-xl p-6 shadow-xl">
+    <div className="w-full max-w-2xl bg-zinc-900/95 backdrop-blur-sm border border-zinc-700 rounded-xl p-6 shadow-xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-xl font-bold text-white mb-1">
-            Detalhes do Dia
+            Resumo do Dia
           </h3>
           <p className="text-zinc-400 text-sm">
-            {formattedDate}
+            {capitalizedDate}
           </p>
         </div>
         <button
@@ -50,10 +62,13 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
         </button>
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      {/* Métricas Principais */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-zinc-800/50 rounded-lg p-4">
-          <div className="text-zinc-400 text-sm mb-1">Placar</div>
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="w-4 h-4 text-blue-400" />
+            <span className="text-zinc-400 text-sm">Placar</span>
+          </div>
           <div className="text-white font-bold text-lg">
             {wins}W / {losses}L
           </div>
@@ -61,8 +76,12 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
             Taxa: {winRate.toFixed(1)}%
           </div>
         </div>
+        
         <div className="bg-zinc-800/50 rounded-lg p-4">
-          <div className="text-zinc-400 text-sm mb-1">Resultado</div>
+          <div className="flex items-center gap-2 mb-2">
+            <DollarSign className="w-4 h-4 text-green-400" />
+            <span className="text-zinc-400 text-sm">Resultado</span>
+          </div>
           <div className={`font-bold text-lg flex items-center ${
             totalProfit > 0 ? 'text-green-400' : totalProfit < 0 ? 'text-red-400' : 'text-zinc-400'
           }`}>
@@ -76,10 +95,85 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
             {formatCurrency(totalProfit)}
           </div>
           <div className="text-zinc-400 text-xs">
-            {dayTrades.length} trade{dayTrades.length !== 1 ? 's' : ''}
+            {dayTrades.length} operação{dayTrades.length !== 1 ? 'ões' : ''}
+          </div>
+        </div>
+        
+        <div className="bg-zinc-800/50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <BarChart3 className="w-4 h-4 text-purple-400" />
+            <span className="text-zinc-400 text-sm">Volume</span>
+          </div>
+          <div className="text-white font-bold text-lg">
+            {formatCurrency(totalVolume)}
+          </div>
+          <div className="text-zinc-400 text-xs">
+            Média: {formatCurrency(averageEntry)}
+          </div>
+        </div>
+        
+        <div className="bg-zinc-800/50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Percent className="w-4 h-4 text-yellow-400" />
+            <span className="text-zinc-400 text-sm">Payout Médio</span>
+          </div>
+          <div className="text-white font-bold text-lg">
+            {averagePayout.toFixed(1)}%
+          </div>
+          <div className="text-zinc-400 text-xs">
+            {dayTrades.length > 0 ? `${Math.min(...dayTrades.map(t => t.payout))}% - ${Math.max(...dayTrades.map(t => t.payout))}%` : '-'}
           </div>
         </div>
       </div>
+
+      {/* Métricas Detalhadas */}
+      {dayTrades.length > 0 && (
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-zinc-800/50 rounded-lg p-4">
+            <div className="text-zinc-400 text-sm mb-2">Melhor Operação</div>
+            <div className="text-green-400 font-bold text-lg">
+              {formatCurrency(bestTrade)}
+            </div>
+          </div>
+          <div className="bg-zinc-800/50 rounded-lg p-4">
+            <div className="text-zinc-400 text-sm mb-2">Pior Operação</div>
+            <div className="text-red-400 font-bold text-lg">
+              {formatCurrency(worstTrade)}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Breakdown por Tipo */}
+      {(fixedHandTrades.length > 0 || sorosTrades.length > 0) && (
+        <div className="mb-6">
+          <h4 className="text-white font-semibold mb-3">Breakdown por Tipo</h4>
+          <div className="grid grid-cols-2 gap-4">
+            {fixedHandTrades.length > 0 && (
+              <div className="bg-zinc-800/30 rounded-lg p-3">
+                <div className="text-zinc-400 text-sm mb-1">Mão Fixa</div>
+                <div className="text-white font-semibold">
+                  {fixedHandTrades.filter(t => t.result === 'win').length}W / {fixedHandTrades.filter(t => t.result === 'loss').length}L
+                </div>
+                <div className="text-zinc-400 text-xs">
+                  {formatCurrency(fixedHandTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0))}
+                </div>
+              </div>
+            )}
+            {sorosTrades.length > 0 && (
+              <div className="bg-zinc-800/30 rounded-lg p-3">
+                <div className="text-zinc-400 text-sm mb-1">Soros</div>
+                <div className="text-white font-semibold">
+                  {sorosTrades.filter(t => t.result === 'win').length}W / {sorosTrades.filter(t => t.result === 'loss').length}L
+                </div>
+                <div className="text-zinc-400 text-xs">
+                  {formatCurrency(sorosTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Add Trade Button */}
       <button
@@ -122,7 +216,7 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
                 <div>
                   <span className="text-zinc-400">Tipo:</span>
                   <span className="text-white ml-2">
-                    {trade.tradeType === 'soros' ? 'Soros' : 'Mão fixa'}
+                    {trade.tradeType === 'soros' ? 'Soros' : 'Mão Fixa'}
                   </span>
                 </div>
                 <div>

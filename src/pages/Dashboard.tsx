@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTradesWithAuth } from '../stores/useTradeStore';
 import { useDepositsWithAuth } from '../stores/useDepositStore';
-import { useBalanceTransactionsWithAuth } from '../stores/useBalanceTransactionStore';
+import { useBalanceTransactionStore } from '../stores/useBalanceTransactionStore';
 import { useNotesWithAuth } from '../stores/useNoteStore';
 import { formatCurrency, formatPercentage, calculateDayStats, calculatePeriodStats, generateCalendarDays, getPeriodDates } from '../utils';
 import { PeriodFilter, CalendarDay } from '../types';
@@ -10,26 +11,25 @@ import {
   DashboardHeader,
   PeriodSummary,
   TradeCalendar,
-  BalanceManager,
   BottomNavigation,
   FloatingButton,
-  ExpandableMenu,
-  DailyHistoryPanel
+  ExpandableMenu
 } from '../components/dashboard';
-import { JournalModal, DepositModal, DepositHistoryModal, LoginRequiredModal } from '../components/modals';
+import { JournalModal, DepositModal, DepositHistoryModal, LoginRequiredModal, BalanceManagerModal } from '../components/modals';
 import { LoadingSpinner } from '../components/ui';
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { trades, loading: tradesLoading, fetchTrades } = useTradesWithAuth();
   const { deposits, loading: depositsLoading, fetchDeposits } = useDepositsWithAuth();
-  const { transactions, fetchTransactions, getTotalBalance } = useBalanceTransactionsWithAuth();
+  const { transactions, fetchTransactions, getTotalBalance } = useBalanceTransactionStore();
   const { notes, loading: notesLoading, fetchNotes } = useNotesWithAuth();
   
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodFilter>('monthly');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+
   
   // Modal states
   const [isJournalModalOpen, setIsJournalModalOpen] = useState(false);
@@ -74,7 +74,10 @@ export const Dashboard: React.FC = () => {
   const loading = authLoading || tradesLoading || depositsLoading || notesLoading;
 
   // Calcular saldo total e lucro mensal conforme documentação
-  const totalBalance = user ? getTotalBalance(user.initialBalance || 0) : 0;
+  // Saldo Total = (Depósitos - Saques) + Lucro/Prejuízo das Operações
+  const balanceFromTransactions = user ? getTotalBalance(user.initialBalance || 0) : 0;
+  const totalProfitLoss = trades ? trades.reduce((total, trade) => total + (trade.profitLoss || 0), 0) : 0;
+  const totalBalance = balanceFromTransactions + totalProfitLoss;
   const monthlyProfit = stats?.netResult || 0;
 
   // Handle quick actions
@@ -174,7 +177,7 @@ export const Dashboard: React.FC = () => {
           onPeriodChange={setSelectedPeriod}
         />
 
-        {/* Calendar and Daily History Panel - Master-Detail Layout */}
+        {/* Calendar and Daily Summary Panel - Master-Detail Layout */}
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Calendar - Master View */}
           <div className="flex-1">
@@ -191,33 +194,21 @@ export const Dashboard: React.FC = () => {
                 }
                 setCurrentDate(newDate);
               }}
-              onDayClick={(day) => {
-                // Implementar a lógica conforme documentação
-                const dayNumber = day.day.replace(/[+\-]/g, '');
-                if (dayNumber && !day.day.includes('+') && !day.day.includes('-')) {
-                  const year = currentDate.getFullYear();
-                  const month = currentDate.getMonth();
-                  const selectedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
-                  setSelectedDay(selectedDate);
+              onDayClick={(day, event) => {
+                // Extrair a data do dia clicado
+                const dayNumber = day.day.replace(/[^0-9]/g, '');
+                
+                if (dayNumber && !day.day.startsWith('-') && !day.day.startsWith('+')) {
+                  const selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), parseInt(dayNumber));
+                  const dateStr = selectedDate.toISOString().split('T')[0];
+                  
+                  // Navegar diretamente para TradeRegistration
+                  navigate(`/trade-registration?date=${dateStr}`);
                 }
               }}
             />
           </div>
-          
-          {/* Daily History Panel - Detail View */}
-          {selectedDay && (
-            <div className="lg:w-96">
-              <DailyHistoryPanel
-                selectedDate={selectedDay}
-                trades={trades}
-                onClose={() => setSelectedDay(null)}
-                onAddTrade={(date) => {
-                  setSelectedDay(null);
-                  setIsJournalModalOpen(true);
-                }}
-              />
-            </div>
-          )}
+
         </div>
 
         {/* Bottom Navigation */}
@@ -260,11 +251,10 @@ export const Dashboard: React.FC = () => {
         message={loginRequiredMessage}
       />
       
-              <BalanceManager 
-          isOpen={isBalanceManagerOpen}
-          onClose={() => setIsBalanceManagerOpen(false)}
-          initialBalance={user?.initialBalance || 0}
-        />
+              <BalanceManagerModal 
+        isOpen={isBalanceManagerOpen}
+        onClose={() => setIsBalanceManagerOpen(false)}
+      />
     </div>
   );
 };

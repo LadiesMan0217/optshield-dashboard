@@ -1,5 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Declaração global para process
+declare const process: {
+  env: {
+    CI?: string;
+    [key: string]: string | undefined;
+  };
+};
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */

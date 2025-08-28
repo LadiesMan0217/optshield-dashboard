@@ -46,7 +46,7 @@ export const DashboardTest: React.FC = () => {
 
   const handleDayClick = (day: any) => {
     // Implementar a lógica conforme documentação
-    const dayNumber = day.day.replace(/[+\-]/g, '');
+    const dayNumber = day.day.replace(/[+-]/g, '');
     if (dayNumber && !day.day.includes('+') && !day.day.includes('-')) {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();

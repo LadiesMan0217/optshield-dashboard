@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, BookOpen, TrendingUp, TrendingDown, DollarSign, Edit3, Check, X, Trash2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTradesWithAuth } from '../stores/useTradeStore';
 import { useNotesWithAuth } from '../stores/useNoteStore';
@@ -21,9 +21,15 @@ interface TradeFormData {
 
 export const TradeRegistration: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { trades, addTrade, updateTrade, deleteTrade, loading, fetchTrades } = useTradesWithAuth();
   const { notes, addNote } = useNotesWithAuth();
+  
+  // Capturar data da URL ou usar data atual
+  const selectedDate = searchParams.get('date') || new Date().toISOString().split('T')[0];
+  
+
   
   const [formData, setFormData] = useState<TradeFormData>({
     payout: 85,
@@ -136,13 +142,23 @@ export const TradeRegistration: React.FC = () => {
     }
   };
 
-  // Filtrar trades do dia atual
-  const today = new Date().toISOString().split('T')[0];
+  // Filtrar trades da data selecionada
   const dailyTrades = trades.filter(trade => {
-    const tradeDate = trade.date instanceof Date 
-      ? trade.date.toISOString().split('T')[0]
-      : new Date(trade.date.seconds * 1000).toISOString().split('T')[0];
-    return tradeDate === today && trade.tradeType === 'fixed_hand';
+    let tradeDate: string;
+    
+    if (trade.date instanceof Date) {
+      tradeDate = trade.date.toISOString().split('T')[0];
+    } else if (typeof trade.date === 'string') {
+      tradeDate = new Date(trade.date).toISOString().split('T')[0];
+    } else if (trade.date && typeof trade.date === 'object' && 'seconds' in trade.date) {
+      // Firestore timestamp
+      tradeDate = new Date(trade.date.seconds * 1000).toISOString().split('T')[0];
+    } else {
+      console.warn('Formato de data inválido:', trade.date);
+      return false;
+    }
+    
+    return tradeDate === selectedDate && trade.tradeType === 'fixed_hand';
   });
 
   // Calcular estatísticas do dia
@@ -186,9 +202,9 @@ export const TradeRegistration: React.FC = () => {
       const profitLoss = calculateProfitLoss(result, formData.entryValue, formData.payout);
       
       const newTrade: Omit<Trade, 'id' | 'userId' | 'createdAt'> = {
-        date: new Date().toISOString(),
+        date: selectedDate,
         payout: formData.payout,
-        entryValue: formData.entryValue,
+        entry_value: formData.entryValue,
         result,
         profitLoss: profitLoss,
         tradeType: 'fixed_hand'
@@ -212,7 +228,7 @@ export const TradeRegistration: React.FC = () => {
     
     try {
       await addNote({
-        date: today,
+        date: selectedDate,
         content: diaryNote.trim()
       });
       
@@ -240,9 +256,19 @@ export const TradeRegistration: React.FC = () => {
             <span className="text-neutral-400 group-hover:text-white font-medium">Voltar</span>
           </button>
           
-          <h1 className="text-2xl font-bold text-white tracking-tight">
-            Registro de Operações
-          </h1>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-white tracking-tight">
+              Registro de Operações
+            </h1>
+            <p className="text-sm text-neutral-400 mt-1">
+              {new Date(selectedDate + 'T12:00:00').toLocaleDateString('pt-BR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </p>
+          </div>
           
           <button
             onClick={() => setIsDiaryModalOpen(true)}

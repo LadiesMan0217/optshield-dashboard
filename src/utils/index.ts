@@ -1,4 +1,4 @@
-import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addDays, subDays } from 'date-fns'
+import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import type { Trade, DayStats, PeriodStats, PeriodFilter } from '../types'
 
@@ -43,7 +43,7 @@ export const getPeriodDates = (date: Date, filter: PeriodFilter) => {
         start: startOfWeek(today, { weekStartsOn: 0 }), // Sunday
         end: endOfWeek(today, { weekStartsOn: 0 })
       }
-    case 'biweekly':
+    case 'biweekly': {
       // Current half of month (15 days)
       const dayOfMonth = today.getDate()
       const isFirstHalf = dayOfMonth <= 15
@@ -62,6 +62,7 @@ export const getPeriodDates = (date: Date, filter: PeriodFilter) => {
           end: new Date(year, month, lastDay)
         }
       }
+    }
     case 'monthly':
       return {
         start: startOfMonth(date),
@@ -244,7 +245,7 @@ export const debounce = <T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): ((...args: Parameters<T>) => void) => {
-  let timeout: NodeJS.Timeout
+  let timeout: number
   return (...args: Parameters<T>) => {
     clearTimeout(timeout)
     timeout = setTimeout(() => func(...args), wait)

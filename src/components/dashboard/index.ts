@@ -5,6 +5,7 @@ export { FloatingButton } from './FloatingButton';
 export { ExpandableMenu } from './ExpandableMenu';
 export { PeriodSummary } from './PeriodSummary';
 export { DayCell } from './DayCell';
-export { BalanceManager } from './BalanceManager';
+
 export { TradeCalendar } from './TradeCalendar';
 export { DailyHistoryPanel } from './DailyHistoryPanel';
+export { DailySummaryPanel } from './DailySummaryPanel';

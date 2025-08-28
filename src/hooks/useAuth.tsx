@@ -260,25 +260,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const updateProfile = async (updates: Partial<AppUser>) => {
     if (!user) throw new Error('No user logged in')
     
-    try {
-      const profileRef = doc(db, COLLECTIONS.PROFILES, user.id)
-      const firebaseUpdates: Partial<UserProfile> = {}
-      
-      if (updates.display_name !== undefined) firebaseUpdates.displayName = updates.display_name
-      if (updates.avatar_url !== undefined) firebaseUpdates.avatarUrl = updates.avatar_url
-      if (updates.currency !== undefined) firebaseUpdates.currency = updates.currency
-      if (updates.initial_balance !== undefined) firebaseUpdates.initialBalance = updates.initial_balance
-      if (updates.hide_balance !== undefined) firebaseUpdates.hideBalance = updates.hide_balance
-      
-      await updateDoc(profileRef, firebaseUpdates)
-      
-      setUser({
-        ...user,
-        ...updates,
-      })
-    } catch (error) {
-      throw error
-    }
+    const profileRef = doc(db, COLLECTIONS.PROFILES, user.id)
+    const firebaseUpdates: Partial<UserProfile> = {}
+    
+    if (updates.display_name !== undefined) firebaseUpdates.displayName = updates.display_name
+    if (updates.avatar_url !== undefined) firebaseUpdates.avatarUrl = updates.avatar_url
+    if (updates.currency !== undefined) firebaseUpdates.currency = updates.currency
+    if (updates.initial_balance !== undefined) firebaseUpdates.initialBalance = updates.initial_balance
+    if (updates.hide_balance !== undefined) firebaseUpdates.hideBalance = updates.hide_balance
+    
+    await updateDoc(profileRef, firebaseUpdates)
+    
+    setUser({
+      ...user,
+      ...updates,
+    })
   }
 
   const value = {

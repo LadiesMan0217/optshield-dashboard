@@ -5,6 +5,7 @@ import { useThemeContext } from '../../contexts/ThemeContext'
 import { Button } from '../ui/Button'
 import { formatCurrency } from '../../utils'
 import { useBalanceTransactionStore } from '../../stores/useBalanceTransactionStore'
+import { useTradesWithAuth } from '../../stores/useTradeStore'
 
 interface HeaderProps {
   onMenuClick?: () => void
@@ -14,11 +15,14 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user, signOut } = useAuth()
   const { isDarkMode, toggleTheme } = useThemeContext()
   const { getTotalBalance } = useBalanceTransactionStore()
+  const { trades } = useTradesWithAuth()
   const [showBalance, setShowBalance] = useState(!user?.hide_balance)
   const [showUserMenu, setShowUserMenu] = useState(false)
 
-  // Calcular saldo total (saldo inicial + depósitos - saques)
-  const totalBalance = user ? user.initial_balance + getTotalBalance() : 0
+  // Calcular saldo total conforme documentação: (Depósitos - Saques) + Lucro/Prejuízo das Operações
+  const balanceFromTransactions = user ? user.initial_balance + getTotalBalance() : 0
+  const totalProfitLoss = trades ? trades.reduce((total, trade) => total + (trade.profitLoss || 0), 0) : 0
+  const totalBalance = balanceFromTransactions + totalProfitLoss
 
   const handleSignOut = async () => {
     try {

@@ -182,7 +182,7 @@ const SorosSimulation: React.FC = () => {
       const newTrade: Omit<Trade, 'id' | 'userId' | 'createdAt'> = {
         date: new Date().toISOString().split('T')[0],
         payout: activeLevel.payout,
-        entryValue: activeLevel.entryValue,
+        entry_value: activeLevel.entryValue,
         result,
         profitLoss: profitLoss,
         tradeType: 'soros',
