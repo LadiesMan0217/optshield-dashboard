@@ -23,7 +23,8 @@ export const ExpandableMenu: React.FC<ExpandableMenuProps> = ({
       icon: BarChart3,
       label: 'Registrar',
       action: () => {
-        navigate('/trade-registration');
+        const currentDate = new Date().toISOString().split('T')[0];
+        navigate(`/trade-registration?date=${currentDate}`);
         onClose();
       }
     },
@@ -32,7 +33,8 @@ export const ExpandableMenu: React.FC<ExpandableMenuProps> = ({
       icon: TrendingUp,
       label: 'Soros',
       action: () => {
-        navigate('/soros');
+        const currentDate = new Date().toISOString().split('T')[0];
+        navigate(`/soros?date=${currentDate}`);
         onClose();
       }
     },

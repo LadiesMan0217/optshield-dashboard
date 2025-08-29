@@ -46,7 +46,7 @@ const TradeDay: React.FC<TradeDayProps> = ({ classNames, day, onHover, onClick }
       <motion.div
         className={`relative flex items-center justify-center py-1 ${getBackgroundColor()} cursor-pointer transition-all duration-200 shadow-lg`}
         style={{ 
-          height: '4rem', 
+          height: '5rem', 
           borderRadius: 16,
           // Efeito de reflexo
           background: hasData 
@@ -249,7 +249,7 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
       
               const tradeInfo = dayTrades.map(trade => ({
           id: trade.id,
-          date: new Date(trade.date).toLocaleDateString('pt-BR'),
+          date: new Date(trade.date + 'T12:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
           result: trade.result,
           profitLoss: trade.profitLoss,
           entryValue: trade.entry_value || 0,
@@ -278,9 +278,8 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
     return days;
   }, [trades, currentDate]);
 
-  // Filtrar apenas os dias que têm trades para exibir na seção "Trades do Mês"
-  const daysWithTrades = useMemo(() => {
-    return calendarDays.filter(day => day.tradeInfo && day.tradeInfo.length > 0);
+  const sortedDays = useMemo(() => {
+    return calendarDays;
   }, [calendarDays]);
 
   const monthNames = [
@@ -293,7 +292,7 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
   return (
     <AnimatePresence mode="wait">
       <motion.div className="relative mx-auto my-6 flex w-full flex-col items-center justify-center gap-6 lg:flex-row">
-        <motion.div layout className="w-full max-w-lg">
+        <motion.div layout className="w-full max-w-2xl">
           <motion.div
             key="calendar-view"
             className="flex w-full flex-col gap-4"
@@ -508,16 +507,27 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
                 layout
               >
                 <AnimatePresence>
-                  {sortedDays
-                    .filter((day) => day.tradeInfo)
-                    .map((day) => (
-                      <motion.div
-                        key={day.day}
-                        className="w-full border-b border-zinc-700 py-0 last:border-b-0"
-                        layout
-                      >
-                        {day.tradeInfo &&
-                          day.tradeInfo.map((trade, tIndex) => {
+                  {hoveredDay ? (
+                    // Show trades for the hovered day only
+                    (() => {
+                      const hoveredDayData = sortedDays.find(day => day.day === hoveredDay);
+                      if (!hoveredDayData || !hoveredDayData.tradeInfo || hoveredDayData.tradeInfo.length === 0) {
+                        return (
+                          <div className="flex items-center justify-center h-full w-full text-zinc-500">
+                            <div className="text-center">
+                              <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                              <p>Nenhum trade encontrado para o dia {hoveredDay}</p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return (
+                        <motion.div
+                          key={hoveredDayData.day}
+                          className="w-full border-b border-zinc-700 py-0 last:border-b-0"
+                          layout
+                        >
+                          {hoveredDayData.tradeInfo.map((trade, tIndex) => {
                             const isProfit = trade.result === 'win';
                             return (
                               <motion.div
@@ -569,11 +579,78 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
                               </motion.div>
                             );
                           })}
-                      </motion.div>
-                    ))}
+                        </motion.div>
+                      );
+                    })()
+                  ) : (
+                    // Show all trades when no day is hovered
+                    sortedDays
+                      .filter((day) => day.tradeInfo)
+                      .map((day) => (
+                        <motion.div
+                          key={day.day}
+                          className="w-full border-b border-zinc-700 py-0 last:border-b-0"
+                          layout
+                        >
+                          {day.tradeInfo &&
+                            day.tradeInfo.map((trade, tIndex) => {
+                              const isProfit = trade.result === 'win';
+                              return (
+                                <motion.div
+                                  key={tIndex}
+                                  className="border-b border-zinc-800 p-4 last:border-b-0 hover:bg-zinc-800/30 transition-colors"
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -10 }}
+                                  transition={{
+                                    duration: 0.2,
+                                    delay: tIndex * 0.05,
+                                  }}
+                                >
+                                  <div className="mb-2 flex items-center justify-between">
+                                    <span className="text-sm text-zinc-300">
+                                      {trade.date}
+                                    </span>
+                                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                      trade.result === 'win' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                                    }`}>
+                                      {trade.result === 'win' ? 'WIN' : 'LOSS'}
+                                    </span>
+                                  </div>
+                                  
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <h3 className="text-lg font-semibold text-white">
+                                      {trade.tradeType === 'soros' ? 'Soros' : 'Mão fixa'}
+                                    </h3>
+                                    <span className="text-sm text-zinc-400">
+                                      Payout: {trade.payout}%
+                                    </span>
+                                  </div>
+                                  
+                                  <div className="flex items-center justify-between text-sm">
+                                    <div className="text-zinc-400">
+                                      Entrada: {formatCurrency(trade.entryValue || 0)}
+                                    </div>
+                                    <div className={`flex items-center font-semibold ${
+                                      isProfit ? 'text-green-400' : 'text-red-400'
+                                    }`}>
+                                      {isProfit ? (
+                                        <TrendingUp className="w-4 h-4 mr-1" />
+                                      ) : (
+                                        <TrendingDown className="w-4 h-4 mr-1" />
+                                      )}
+                                      {formatCurrency(trade.profitLoss)}
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                        </motion.div>
+                      ))
+                  )}
                 </AnimatePresence>
                 
-                {sortedDays.filter((day) => day.tradeInfo).length === 0 && (
+                {!hoveredDay && sortedDays.filter((day) => day.tradeInfo).length === 0 && (
                   <div className="flex items-center justify-center h-full w-full text-zinc-500">
                     <div className="text-center">
                       <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />

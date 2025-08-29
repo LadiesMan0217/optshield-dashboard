@@ -8,4 +8,3 @@ export { DayCell } from './DayCell';
 
 export { TradeCalendar } from './TradeCalendar';
 export { DailyHistoryPanel } from './DailyHistoryPanel';
-export { DailySummaryPanel } from './DailySummaryPanel';

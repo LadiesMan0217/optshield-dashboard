@@ -232,6 +232,13 @@ test.describe('Feature Name', () => {
 - Este documento deve ser versionado junto com o código
 - **SEMPRE** documentar mudanças significativas
 - **SEMPRE** manter histórico de alterações importantes
+- **SEMPRE** documentar decisões arquiteturais
+- **SEMPRE** documentar padrões de código
+- **SEMPRE** documentar padrões de segurança
+- **SEMPRE** documentar padrões de performance
+- **SEMPRE** documentar padrões de usabilidade
+- **SEMPRE** documentar padrões de acessibilidade
+- **SEMPRE** documentar com data e hora da última atualização
 
 ---
 

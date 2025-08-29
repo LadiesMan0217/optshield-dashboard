@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { Login, SignUp, Dashboard, TradeRegistration } from './pages'
 import SorosSimulation from './pages/SorosSimulation'
+import HistoryPage from './pages/HistoryPage'
 import { LoadingSpinner, AccountBlockedAlert } from './components/ui'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import AuthConfirm from './components/AuthConfirm'
@@ -84,6 +85,16 @@ const AppContent: React.FC = () => {
             <ProtectedRoute>
               <ErrorBoundary>
                 <SorosSimulation />
+              </ErrorBoundary>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <ErrorBoundary>
+                <HistoryPage />
               </ErrorBoundary>
             </ProtectedRoute>
           }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, BookOpen, TrendingUp, TrendingDown, DollarSign, Edit3, Check, X, Trash2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, TrendingUp, TrendingDown, DollarSign, Edit3, Check, X, Trash2, Target, Zap } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTradesWithAuth } from '../stores/useTradeStore';
@@ -158,7 +158,7 @@ export const TradeRegistration: React.FC = () => {
       return false;
     }
     
-    return tradeDate === selectedDate && trade.tradeType === 'fixed_hand';
+    return tradeDate === selectedDate && (trade.tradeType === 'fixed_hand' || trade.tradeType === 'soros');
   });
 
   // Calcular estatísticas do dia
@@ -265,9 +265,29 @@ export const TradeRegistration: React.FC = () => {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
-                day: 'numeric'
+                day: 'numeric',
+                timeZone: 'UTC'
               })}
             </p>
+            
+            {/* Botão de Navegação entre Tipos de Trade */}
+            <div className="mt-4 flex items-center justify-center">
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-0.5 flex">
+                <button
+                  className="flex items-center space-x-2 px-3 py-1.5 rounded-md text-xs font-medium bg-blue-600/20 text-blue-300 border border-blue-500/30 transition-all duration-200"
+                >
+                  <Target className="w-3.5 h-3.5" />
+                  <span>Mão Fixa</span>
+                </button>
+                <button
+                  onClick={() => navigate(`/soros?date=${selectedDate}`)}
+                  className="flex items-center space-x-2 px-3 py-1.5 rounded-md text-xs font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-200"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>Soros Gale</span>
+                </button>
+              </div>
+            </div>
           </div>
           
           <button
@@ -559,6 +579,9 @@ export const TradeRegistration: React.FC = () => {
                             <div className="text-neutral-300">
                               <span className="font-medium">{formatCurrency(trade.entryValue, user?.currency || 'BRL')}</span>
                               <span className="text-neutral-500 ml-2">• {trade.payout.toString().replace('.', ',')}%</span>
+                              {trade.tradeType === 'soros' && (
+                                <span className="text-purple-400 ml-2">• Soros Nível {trade.level}</span>
+                              )}
                             </div>
                           </div>
                           

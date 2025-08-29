@@ -212,7 +212,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Bottom Navigation */}
-        <BottomNavigation />
+        <BottomNavigation activeTab="dashboard" />
         
         {/* Expandable Menu */}
         <ExpandableMenu

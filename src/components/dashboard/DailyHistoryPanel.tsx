@@ -25,11 +25,14 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
   const wins = dayTrades.filter(trade => trade.result === 'win').length;
   const losses = dayTrades.filter(trade => trade.result === 'loss').length;
   const winRate = dayTrades.length > 0 ? (wins / dayTrades.length) * 100 : 0;
+  const totalVolume = dayTrades.reduce((sum, trade) => sum + (trade.entry_value || 0), 0);
+  const averagePayout = dayTrades.length > 0 ? dayTrades.reduce((sum, trade) => sum + trade.payout, 0) / dayTrades.length : 0;
 
-  const formattedDate = format(parseISO(selectedDate), "d 'de' MMMM 'de' yyyy", { locale: ptBR });
+  const formattedDate = format(parseISO(selectedDate), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR });
+  const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
   return (
-    <div className="w-full max-w-lg bg-zinc-900/95 backdrop-blur-sm border border-zinc-700 rounded-xl p-6 shadow-xl">
+    <div className="w-full max-w-4xl bg-zinc-900/95 backdrop-blur-sm border border-zinc-700 rounded-xl p-6 shadow-xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -37,7 +40,7 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
             Detalhes do Dia
           </h3>
           <p className="text-zinc-400 text-sm">
-            {formattedDate}
+            {capitalizedDate}
           </p>
         </div>
         <button
@@ -51,7 +54,7 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-zinc-800/50 rounded-lg p-4">
           <div className="text-zinc-400 text-sm mb-1">Placar</div>
           <div className="text-white font-bold text-lg">
@@ -76,7 +79,25 @@ export const DailyHistoryPanel: React.FC<DailyHistoryPanelProps> = ({
             {formatCurrency(totalProfit)}
           </div>
           <div className="text-zinc-400 text-xs">
-            {dayTrades.length} trade{dayTrades.length !== 1 ? 's' : ''}
+            {dayTrades.length} operação{dayTrades.length !== 1 ? 'ões' : ''}
+          </div>
+        </div>
+        <div className="bg-zinc-800/50 rounded-lg p-4">
+          <div className="text-zinc-400 text-sm mb-1">Volume</div>
+          <div className="text-white font-bold text-lg">
+            {formatCurrency(totalVolume)}
+          </div>
+          <div className="text-zinc-400 text-xs">
+            Média: {formatCurrency(totalVolume / (dayTrades.length || 1))}
+          </div>
+        </div>
+        <div className="bg-zinc-800/50 rounded-lg p-4">
+          <div className="text-zinc-400 text-sm mb-1">Payout Médio</div>
+          <div className="text-white font-bold text-lg">
+            {averagePayout.toFixed(1)}%
+          </div>
+          <div className="text-zinc-400 text-xs">
+            {dayTrades.length > 0 ? `${Math.min(...dayTrades.map(t => t.payout))}% - ${Math.max(...dayTrades.map(t => t.payout))}%` : '-'}
           </div>
         </div>
       </div>
