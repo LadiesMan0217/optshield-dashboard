@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useCallback } from 'react'
 import { firebaseDb } from '../lib/firebase.db'
 import type { Trade, TradeState } from '../types'
 import { useAuth } from '../hooks/useAuth'
@@ -110,15 +111,15 @@ export const useTradesWithAuth = () => {
   const { user } = useAuth()
   const store = useTradeStore()
 
-  const fetchTrades = async (startDate?: string, endDate?: string) => {
+  const fetchTrades = useCallback(async (startDate?: string, endDate?: string) => {
     if (!user) {
       console.warn('useTradesWithAuth: Tentativa de buscar trades sem usuário autenticado')
       return
     }
     return store.fetchTrades(user.id, startDate, endDate)
-  }
+  }, [user, store.fetchTrades])
 
-  const addTrade = async (tradeData: Omit<Trade, 'id' | 'userId' | 'createdAt'>) => {
+  const addTrade = useCallback(async (tradeData: Omit<Trade, 'id' | 'userId' | 'createdAt'>) => {
     if (!user) throw new Error('User not authenticated')
     console.log('🔍 useTradesWithAuth.addTrade: Usuário autenticado:', user.id)
     return firebaseDb.addTrade({
@@ -130,23 +131,34 @@ export const useTradesWithAuth = () => {
       }))
       return newTrade
     })
-  }
+  }, [user])
 
-  const updateTrade = async (id: string, updates: Partial<Trade>) => {
+  const updateTrade = useCallback(async (id: string, updates: Partial<Trade>) => {
     if (!user) throw new Error('User not authenticated')
     return store.updateTrade(id, updates)
-  }
+  }, [user, store.updateTrade])
 
-  const deleteTrade = async (id: string) => {
+  const deleteTrade = useCallback(async (id: string) => {
     if (!user) throw new Error('User not authenticated')
     return store.deleteTrade(id)
-  }
+  }, [user, store.deleteTrade])
+
+  const getTradesByDate = useCallback((date: string) => {
+    return store.getTradesByDate(date)
+  }, [store.getTradesByDate])
+
+  const getTradesByPeriod = useCallback((startDate: string, endDate: string) => {
+    return store.getTradesByPeriod(startDate, endDate)
+  }, [store.getTradesByPeriod])
 
   return {
-    ...store,
+    trades: store.trades,
+    loading: store.loading,
     fetchTrades,
     addTrade,
     updateTrade,
     deleteTrade,
+    getTradesByDate,
+    getTradesByPeriod,
   }
 }

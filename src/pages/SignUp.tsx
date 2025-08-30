@@ -40,11 +40,8 @@ export const SignUp: React.FC = () => {
 
     if (!formData.password) {
       newErrors.password = 'Senha é obrigatória';
-    } else {
-      const passwordValidation = validatePassword(formData.password);
-      if (!passwordValidation.isValid) {
-        newErrors.password = passwordValidation.errors[0];
-      }
+    } else if (!validatePassword(formData.password)) {
+      newErrors.password = 'A senha deve ter pelo menos 6 caracteres';
     }
 
     if (!formData.confirmPassword) {

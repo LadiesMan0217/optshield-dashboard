@@ -278,9 +278,8 @@ export const TradeCalendar: React.FC<TradeCalendarProps> = ({
     return days;
   }, [trades, currentDate]);
 
-  const sortedDays = useMemo(() => {
-    return calendarDays;
-  }, [calendarDays]);
+  // Removido useMemo desnecessário que pode causar re-renderizações
+  const sortedDays = calendarDays;
 
   const monthNames = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',

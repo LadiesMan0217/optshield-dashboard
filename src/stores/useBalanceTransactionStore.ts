@@ -88,14 +88,23 @@ const useBalanceTransactionStore = create<BalanceTransactionState>((set, get) =>
   getTotalBalance: (initialBalance: number = 0) => {
     const { transactions } = get();
     
-    return transactions.reduce((total, transaction) => {
+    // Garante que o saldo inicial seja um número válido
+    const safeInitialBalance = isNaN(initialBalance) ? 0 : initialBalance;
+    
+    const totalBalance = transactions.reduce((total, transaction) => {
+      // Garante que o amount seja um número válido
+      const amount = isNaN(transaction.amount) ? 0 : transaction.amount;
+      
       if (transaction.type === 'deposit') {
-        return total + transaction.amount;
+        return total + amount;
       } else if (transaction.type === 'withdrawal') {
-        return total - transaction.amount;
+        return total - amount;
       }
       return total;
-    }, initialBalance);
+    }, safeInitialBalance);
+    
+    // Garante que o resultado final seja um número válido
+    return isNaN(totalBalance) ? 0 : totalBalance;
   },
 }));
 
@@ -103,15 +112,53 @@ export { useBalanceTransactionStore };
 
 export const useBalanceTransactionsWithAuth = () => {
   const { user } = useAuth();
-  const store = useBalanceTransactionStore();
+  const {
+    transactions,
+    isLoading,
+    error,
+    fetchTransactions,
+    addTransaction: addTransactionToStore,
+    updateTransaction: updateTransactionInStore,
+    deleteTransaction: deleteTransactionInStore,
+    clearTransactions,
+    getTotalBalance,
+  } = useBalanceTransactionStore();
 
   React.useEffect(() => {
-    if (user) {
-      store.fetchTransactions();
+    if (user?.id) {
+      fetchTransactions(user.id);
     } else {
-      store.clearTransactions();
+      clearTransactions();
     }
-  }, [user, store]);
+  }, [user?.id, fetchTransactions, clearTransactions]);
 
-  return store;
+  const addTransaction = async (transactionData: Omit<BalanceTransaction, 'id' | 'userId' | 'createdAt'>) => {
+    if (!user?.id) {
+      console.error('❌ useBalanceTransactionsWithAuth.addTransaction: Usuário não autenticado ou sem ID.');
+      throw new Error('Usuário não autenticado');
+    }
+    return addTransactionToStore(user.id, transactionData);
+  };
+
+  const updateTransaction = async (id: string, updates: Partial<BalanceTransaction>) => {
+    if (!user?.id) throw new Error('Usuário não autenticado');
+    return updateTransactionInStore(id, updates);
+  };
+
+  const deleteTransaction = async (id: string) => {
+    if (!user?.id) throw new Error('Usuário não autenticado');
+    return deleteTransactionInStore(id);
+  };
+
+  return {
+    transactions,
+    isLoading,
+    error,
+    addTransaction,
+    updateTransaction,
+    deleteTransaction,
+    getTotalBalance,
+    fetchTransactions,
+    clearTransactions,
+  };
 };

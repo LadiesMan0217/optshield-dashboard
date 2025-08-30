@@ -3,9 +3,9 @@ import { LucideIcon } from 'lucide-react'
 import { OrbitalLoader } from './OrbitalLoader'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'premium'
   size?: 'sm' | 'md' | 'lg'
-  icon?: LucideIcon
+  icon?: LucideIcon | React.ElementType
   iconPosition?: 'left' | 'right'
   loading?: boolean
   fullWidth?: boolean
@@ -28,8 +28,9 @@ export const Button: React.FC<ButtonProps> = ({
   const variantClasses = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
     secondary: 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700 focus:ring-zinc-500',
-    ghost: 'text-zinc-300 hover:bg-zinc-800 focus:ring-zinc-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
+    ghost: 'text-zinc-300 hover:bg-zinc-800 hover:text-white focus:ring-zinc-500',
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+    premium: 'bg-gradient-to-r from-white to-neutral-100 text-black font-bold hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105 border border-white/20'
   }
   
   const sizeClasses = {

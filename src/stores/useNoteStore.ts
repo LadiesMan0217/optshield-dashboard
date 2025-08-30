@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useCallback } from 'react'
 import { firebaseDb } from '../lib/firebase.db'
 import type { DailyNote, NoteState } from '../types'
 import { useAuth } from '../hooks/useAuth'
@@ -118,15 +119,15 @@ export const useNotesWithAuth = () => {
   const { user } = useAuth()
   const store = useNoteStore()
 
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     if (!user) {
       console.warn('useNotesWithAuth: Tentativa de buscar notas sem usuário autenticado')
       return
     }
     return store.fetchNotes(user.id)
-  }
+  }, [user, store.fetchNotes])
 
-  const addNote = async (noteData: Omit<DailyNote, 'id' | 'userId' | 'createdAt'>) => {
+  const addNote = useCallback(async (noteData: Omit<DailyNote, 'id' | 'userId' | 'createdAt'>) => {
     if (!user) throw new Error('User not authenticated')
     return firebaseDb.addNote({
       ...noteData,
@@ -147,20 +148,22 @@ export const useNotesWithAuth = () => {
       })
       return newNote
     })
-  }
+  }, [user])
 
-  const updateNote = async (date: string, content: string) => {
+  const updateNote = useCallback(async (date: string, content: string) => {
     if (!user) throw new Error('User not authenticated')
     return store.updateNote(date, content)
-  }
+  }, [user, store.updateNote])
 
-  const deleteNote = async (date: string) => {
+  const deleteNote = useCallback(async (date: string) => {
     if (!user) throw new Error('User not authenticated')
     return store.deleteNote(date)
-  }
+  }, [user, store.deleteNote])
 
   return {
-    ...store,
+    notes: store.notes,
+    loading: store.loading,
+    getNoteByDate: store.getNoteByDate,
     fetchNotes,
     addNote,
     updateNote,

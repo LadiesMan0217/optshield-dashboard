@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useCallback } from 'react'
 import { firebaseDb } from '../lib/firebase.db'
 import type { Deposit, DepositState } from '../types'
 import { useAuth } from '../hooks/useAuth'
@@ -94,15 +95,15 @@ export const useDepositsWithAuth = () => {
   const { user } = useAuth()
   const store = useDepositStore()
 
-  const fetchDeposits = async () => {
+  const fetchDeposits = useCallback(async () => {
     if (!user) {
       console.warn('useDepositsWithAuth: Tentativa de buscar depósitos sem usuário autenticado')
       return
     }
     return store.fetchDeposits(user.id)
-  }
+  }, [user, store.fetchDeposits])
 
-  const addDeposit = async (depositData: Omit<Deposit, 'id' | 'userId' | 'createdAt'>) => {
+  const addDeposit = useCallback(async (depositData: Omit<Deposit, 'id' | 'userId' | 'createdAt'>) => {
     if (!user) throw new Error('User not authenticated')
     return firebaseDb.addDeposit({
       ...depositData,
@@ -113,20 +114,22 @@ export const useDepositsWithAuth = () => {
       }))
       return newDeposit
     })
-  }
+  }, [user])
 
-  const updateDeposit = async (id: string, updates: Partial<Omit<Deposit, 'id' | 'userId' | 'createdAt'>>) => {
+  const updateDeposit = useCallback(async (id: string, updates: Partial<Omit<Deposit, 'id' | 'userId' | 'createdAt'>>) => {
     if (!user) throw new Error('User not authenticated')
     return store.updateDeposit(id, updates)
-  }
+  }, [user, store.updateDeposit])
 
-  const deleteDeposit = async (id: string) => {
+  const deleteDeposit = useCallback(async (id: string) => {
     if (!user) throw new Error('User not authenticated')
     return store.deleteDeposit(id)
-  }
+  }, [user, store.deleteDeposit])
 
   return {
-    ...store,
+    deposits: store.deposits,
+    loading: store.loading,
+    error: store.error,
     fetchDeposits,
     addDeposit,
     updateDeposit,
