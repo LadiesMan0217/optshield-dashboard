@@ -1,4 +1,4 @@
-# OptShield - Sistema de Controle de Trading
+# Trading Shield - Sistema de Controle de Trading
 
 Um sistema completo para controle e análise de operações de trading, desenvolvido com React, TypeScript e Firebase.
 
@@ -33,7 +33,7 @@ Um sistema completo para controle e análise de operações de trading, desenvol
 ### 1. Clone o projeto
 ```bash
 git clone <url-do-repositorio>
-cd optshield-react
+cd trading-shield-react
 ```
 
 ### 2. Instale as dependências

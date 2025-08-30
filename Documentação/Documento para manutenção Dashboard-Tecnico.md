@@ -1,4 +1,4 @@
-# Documentação Técnica - Dashboard OptiShield
+# Documentação Técnica - Dashboard Trading Shield
 
 **Data de Criação:** Janeiro 2025  
 **Versão:** 1.0  
@@ -9,7 +9,7 @@
 
 ## 1. Visão Geral
 
-O Dashboard é a página principal da aplicação OptiShield, responsável por exibir um resumo completo das operações de trading do usuário. Ele integra múltiplos componentes para fornecer uma visão consolidada do desempenho financeiro, incluindo calendário interativo, estatísticas de período e navegação rápida.
+O Dashboard é a página principal da aplicação Trading Shield, responsável por exibir um resumo completo das operações de trading do usuário. Ele integra múltiplos componentes para fornecer uma visão consolidada do desempenho financeiro, incluindo calendário interativo, estatísticas de período e navegação rápida.
 
 ### Localização
 - **Arquivo Principal:** `src/pages/Dashboard.tsx`
@@ -493,7 +493,7 @@ npm run dev
 
 **Arquiteto Responsável:** Sistema IA  
 **Documentação:** Este arquivo  
-**Repositório:** OptiShield React  
+**Repositório:** Trading Shield React  
 **Última Atualização:** Janeiro 2025
 
 ---

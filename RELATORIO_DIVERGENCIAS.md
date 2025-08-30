@@ -1,8 +1,8 @@
-# Relatório de Divergências - OptiShield Dashboard
+# Relatório de Divergências - Trading Shield Dashboard
 
 ## Resumo Executivo
 
-Este relatório documenta as divergências críticas encontradas entre a implementação atual do projeto OptiShield e as especificações definidas na **Documentação Técnica: Dashboard Principal (React)**. A documentação deve ser considerada como a **fonte única da verdade** para todas as regras de negócio e arquitetura.
+Este relatório documenta as divergências críticas encontradas entre a implementação atual do projeto Trading Shield e as especificações definidas na **Documentação Técnica: Dashboard Principal (React)**. A documentação deve ser considerada como a **fonte única da verdade** para todas as regras de negócio e arquitetura.
 
 ---
 

@@ -1,4 +1,4 @@
-# Guia de Regras do Projeto OptiShield
+# Guia de Regras do Projeto Trading Shield
 
 ## 1. Padrões de Tecnologia e Dependências
 
@@ -243,5 +243,5 @@ test.describe('Feature Name', () => {
 ---
 
 **Última atualização**: Janeiro 2025
-**Versão do projeto**: OptiShield v1.0
+**Versão do projeto**: Trading Shield v1.0
 **Responsável**: Arquiteto de Software IA

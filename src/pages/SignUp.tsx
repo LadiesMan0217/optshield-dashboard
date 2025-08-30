@@ -117,7 +117,7 @@ export const SignUp: React.FC = () => {
           <div className="text-center mb-8 relative">
             <div className="inline-block relative">
               <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent mb-2 tracking-wide">
-                OptiShield
+                Trading Shield
               </h1>
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-20" />
             </div>

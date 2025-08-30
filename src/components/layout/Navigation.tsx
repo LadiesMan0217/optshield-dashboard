@@ -78,7 +78,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         {/* Logo */}
         <div className="p-6 border-b border-slate-700">
           <h1 className="text-2xl font-bold text-white">
-            OptiShield
+            Trading Shield
           </h1>
           <p className="text-sm text-slate-400 mt-1">
             Trading Journal

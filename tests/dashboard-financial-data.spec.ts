@@ -8,7 +8,7 @@ test.describe('Dashboard Financial Data Display', () => {
 
   test('should display login screen initially', async ({ page }) => {
     // Verificar se a tela de login está sendo exibida
-    await expect(page.locator('text=OptiShield')).toBeVisible();
+    await expect(page.locator('text=Trading Shield')).toBeVisible();
     await expect(page.locator('text=Acesse sua conta premium')).toBeVisible();
     await expect(page.locator('text=Email')).toBeVisible();
     await expect(page.locator('text=Senha')).toBeVisible();
@@ -52,13 +52,13 @@ test.describe('Dashboard Financial Data Display', () => {
   test('should check responsive design elements', async ({ page }) => {
     // Testar em diferentes tamanhos de tela
     await page.setViewportSize({ width: 1280, height: 720 });
-    await expect(page.locator('text=OptiShield')).toBeVisible();
+    await expect(page.locator('text=Trading Shield')).toBeVisible();
 
     await page.setViewportSize({ width: 768, height: 1024 });
-    await expect(page.locator('text=OptiShield')).toBeVisible();
+    await expect(page.locator('text=Trading Shield')).toBeVisible();
 
     await page.setViewportSize({ width: 375, height: 667 });
-    await expect(page.locator('text=OptiShield')).toBeVisible();
+    await expect(page.locator('text=Trading Shield')).toBeVisible();
   });
 
   test('should verify page loading performance', async ({ page }) => {
@@ -66,7 +66,7 @@ test.describe('Dashboard Financial Data Display', () => {
     await page.goto('http://localhost:3000/');
     
     // Aguardar elementos principais carregarem ao invés de networkidle
-    await expect(page.locator('text=OptiShield')).toBeVisible();
+    await expect(page.locator('text=Trading Shield')).toBeVisible();
     const loadTime = Date.now() - startTime;
 
     // Verificar se a página carrega em menos de 10 segundos (mais realista)

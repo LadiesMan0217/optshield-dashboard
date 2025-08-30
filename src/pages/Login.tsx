@@ -93,7 +93,7 @@ export const Login: React.FC = () => {
           <div className="relative z-10 p-10">
             <div className="text-center mb-10">
               <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-white via-neutral-200 to-white bg-clip-text text-transparent tracking-wide">
-                OptiShield
+                Trading Shield
               </h1>
               <div className="w-16 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto mb-4"></div>
               <p className="text-neutral-300 font-medium tracking-wide">

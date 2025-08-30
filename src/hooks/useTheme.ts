@@ -9,7 +9,7 @@ interface UseThemeReturn {
   toggleTheme: () => void;
 }
 
-const THEME_STORAGE_KEY = 'optishield-theme';
+const THEME_STORAGE_KEY = 'trading-shield-theme';
 
 export const useTheme = (): UseThemeReturn => {
   const [theme, setThemeState] = useState<Theme>(() => {

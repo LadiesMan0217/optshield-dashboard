@@ -5,13 +5,13 @@
 @tailwind utilities;
 
 :root {
-  /* OptiShield Design System */
+  /* Trading Shield Design System */
   --bg-primary: #0f172a; /* slate-900 - Fundo principal mais sofisticado */
   --bg-secondary: #1e293b; /* slate-800 - Fundo de componentes */
   --bg-tertiary: #334155; /* slate-700 - Bordas e elementos sutis */
   
   /* Brand Colors */
-  --brand-primary: #3b82f6; /* blue-500 - Azul OptiShield */
+  --brand-primary: #3b82f6; /* blue-500 - Azul Trading Shield */
   --brand-secondary: #1d4ed8; /* blue-700 - Azul mais escuro */
   
   /* Semantic Colors */

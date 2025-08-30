@@ -1,6 +1,6 @@
 Documentação Técnica: Página de Histórico de Operações
 1. Objetivo
-Este documento define os requisitos técnicos e as regras de negócio para a criação da página de "Histórico de Operações" da aplicação OptiShield em React. O objetivo é construir uma interface rica em funcionalidades, visualmente atraente e responsiva, que permita ao usuário analisar seu desempenho passado com precisão.
+Este documento define os requisitos técnicos e as regras de negócio para a criação da página de "Histórico de Operações" da aplicação Trading Shield em React. O objetivo é construir uma interface rica em funcionalidades, visualmente atraente e responsiva, que permita ao usuário analisar seu desempenho passado com precisão.
 
 2. Regras Gerais de Desenvolvimento
 Diretriz Absoluta: O desenvolvimento desta página deve seguir estritamente as regras definidas no arquivo .trae/rules/project_rules.md.
