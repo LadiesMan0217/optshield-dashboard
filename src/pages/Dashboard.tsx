@@ -7,6 +7,7 @@ import { Plus } from 'lucide-react';
 import { PeriodFilter } from '../types';
 import { BottomNavigation } from '../components/dashboard/BottomNavigation';
 import InteractiveCalendar from '../components/dashboard/InteractiveCalendar';
+import UserWidget from '../components/layout/UserWidget';
 import { useTradesWithAuth } from '../stores/useTradeStore';
 import { useBalanceTransactionsWithAuth } from '../stores/useBalanceTransactionStore';
 import { useAuth } from '../hooks/useAuth';
@@ -61,8 +62,13 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Header com UserWidget */}
+      <div className="absolute top-4 left-4 z-40">
+        <UserWidget />
+      </div>
+      
       <div className="transition-all duration-300 pb-20">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 pt-20 pb-6">
           <div className="mb-8">
             <PeriodSummary 
               monthlyProfit={periodStats.netResult}

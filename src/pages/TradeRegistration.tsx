@@ -306,72 +306,61 @@ export const TradeRegistration: React.FC = () => {
           {/* Placar do Dia */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Vitórias */}
-            <div className="group relative bg-gradient-to-br from-neutral-900/60 via-neutral-800/40 to-neutral-900/60 backdrop-blur-xl border border-neutral-700/50 rounded-xl p-6 overflow-hidden transition-all duration-300 hover:border-success-500/30 hover:shadow-lg hover:shadow-success-500/10 hover:scale-[1.02]">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none" />
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-success-400 to-success-600 shadow-lg shadow-success-500/30"></div>
-              
-              <div className="relative flex items-start justify-between">
+            <div className="bg-neutral-900/80 border border-neutral-700/50 rounded-xl p-6 hover:border-success-500/30 transition-all duration-200">
+              <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-neutral-400 mb-3 tracking-wide uppercase">Vitórias</h3>
-                  <div className="text-3xl font-bold text-success-400 mb-1 tracking-tight leading-none">
+                  <h3 className="text-sm font-medium text-neutral-400 mb-3 uppercase tracking-wide">Vitórias</h3>
+                  <div className="text-3xl font-bold text-success-400 mb-1">
                     {dailyStats.wins}
                   </div>
-                  <div className="text-xs text-neutral-500 tracking-wider font-normal">
+                  <div className="text-xs text-neutral-500">
                     Hoje
                   </div>
                 </div>
-                <div className="p-3 rounded-lg bg-success-500/10 border border-success-500/20">
+                <div className="p-3 rounded-lg bg-success-500/10">
                   <TrendingUp className="w-5 h-5 text-success-400" />
                 </div>
               </div>
             </div>
 
             {/* Derrotas */}
-            <div className="group relative bg-gradient-to-br from-neutral-900/60 via-neutral-800/40 to-neutral-900/60 backdrop-blur-xl border border-neutral-700/50 rounded-xl p-6 overflow-hidden transition-all duration-300 hover:border-danger-500/30 hover:shadow-lg hover:shadow-danger-500/10 hover:scale-[1.02]">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none" />
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-danger-400 to-danger-600 shadow-lg shadow-danger-500/30"></div>
-              
-              <div className="relative flex items-start justify-between">
+            <div className="bg-neutral-900/80 border border-neutral-700/50 rounded-xl p-6 hover:border-danger-500/30 transition-all duration-200">
+              <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-neutral-400 mb-3 tracking-wide uppercase">Derrotas</h3>
-                  <div className="text-3xl font-bold text-danger-400 mb-1 tracking-tight leading-none">
+                  <h3 className="text-sm font-medium text-neutral-400 mb-3 uppercase tracking-wide">Derrotas</h3>
+                  <div className="text-3xl font-bold text-danger-400 mb-1">
                     {dailyStats.losses}
                   </div>
-                  <div className="text-xs text-neutral-500 tracking-wider font-normal">
+                  <div className="text-xs text-neutral-500">
                     Hoje
                   </div>
                 </div>
-                <div className="p-3 rounded-lg bg-danger-500/10 border border-danger-500/20">
+                <div className="p-3 rounded-lg bg-danger-500/10">
                   <TrendingDown className="w-5 h-5 text-danger-400" />
                 </div>
               </div>
             </div>
 
             {/* Resultado Total */}
-            <div className={`group relative bg-gradient-to-br from-neutral-900/60 via-neutral-800/40 to-neutral-900/60 backdrop-blur-xl border border-neutral-700/50 rounded-xl p-6 overflow-hidden transition-all duration-300 hover:border-white/30 hover:shadow-lg hover:shadow-white/10 hover:scale-[1.02]`}>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none" />
-              <div className={`absolute left-0 top-0 bottom-0 w-1 shadow-lg ${
-                dailyStats.totalResult >= 0 
-                  ? 'bg-gradient-to-b from-success-400 to-success-600 shadow-success-500/30' 
-                  : 'bg-gradient-to-b from-danger-400 to-danger-600 shadow-danger-500/30'
-              }`}></div>
-              
-              <div className="relative flex items-start justify-between">
+            <div className={`bg-neutral-900/80 border border-neutral-700/50 rounded-xl p-6 transition-all duration-200 ${
+              dailyStats.totalResult >= 0 ? 'hover:border-success-500/30' : 'hover:border-danger-500/30'
+            }`}>
+              <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-neutral-400 mb-3 tracking-wide uppercase">Resultado Total</h3>
-                  <div className={`text-3xl font-bold mb-1 tracking-tight leading-none ${
+                  <h3 className="text-sm font-medium text-neutral-400 mb-3 uppercase tracking-wide">Resultado Total</h3>
+                  <div className={`text-3xl font-bold mb-1 ${
                     dailyStats.totalResult >= 0 ? 'text-success-400' : 'text-danger-400'
                   }`}>
                     {formatCurrency(dailyStats.totalResult)}
                   </div>
-                  <div className="text-xs text-neutral-500 tracking-wider font-normal">
+                  <div className="text-xs text-neutral-500">
                     Hoje
                   </div>
                 </div>
-                <div className={`p-3 rounded-lg border ${
+                <div className={`p-3 rounded-lg ${
                   dailyStats.totalResult >= 0 
-                    ? 'bg-success-500/10 border-success-500/20' 
-                    : 'bg-danger-500/10 border-danger-500/20'
+                    ? 'bg-success-500/10' 
+                    : 'bg-danger-500/10'
                 }`}>
                   <DollarSign className={`w-5 h-5 ${
                     dailyStats.totalResult >= 0 ? 'text-success-400' : 'text-danger-400'
@@ -382,10 +371,8 @@ export const TradeRegistration: React.FC = () => {
           </div>
 
           {/* Formulário de Registro */}
-          <div className="bg-gradient-to-br from-neutral-900/60 via-neutral-800/40 to-neutral-900/60 backdrop-blur-xl border border-neutral-700/50 rounded-xl p-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none rounded-xl" />
-            
-            <div className="relative space-y-6">
+          <div className="bg-neutral-900/80 border border-neutral-700/50 rounded-xl p-8">
+            <div className="space-y-6">
               <h2 className="text-xl font-bold text-white mb-6 tracking-tight">Nova Operação</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -431,24 +418,22 @@ export const TradeRegistration: React.FC = () => {
                 <button
                   onClick={() => handleTradeSubmit('win')}
                   disabled={isSubmitting || formData.entryValue <= 0}
-                  className="group relative bg-gradient-to-r from-success-600 to-success-500 hover:from-success-500 hover:to-success-400 disabled:from-neutral-700 disabled:to-neutral-600 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-success-500/25 disabled:hover:scale-100 disabled:hover:shadow-none overflow-hidden"
+                  className="bg-success-600 hover:bg-success-500 disabled:bg-neutral-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-200 disabled:cursor-not-allowed"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-                  <div className="relative flex items-center justify-center space-x-2">
+                  <div className="flex items-center justify-center space-x-2">
                     <TrendingUp className="w-6 h-6" />
-                    <span className="text-lg tracking-wide">WIN</span>
+                    <span className="text-lg">WIN</span>
                   </div>
                 </button>
                 
                 <button
                   onClick={() => handleTradeSubmit('loss')}
                   disabled={isSubmitting || formData.entryValue <= 0}
-                  className="group relative bg-gradient-to-r from-danger-600 to-danger-500 hover:from-danger-500 hover:to-danger-400 disabled:from-neutral-700 disabled:to-neutral-600 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-danger-500/25 disabled:hover:scale-100 disabled:hover:shadow-none overflow-hidden"
+                  className="bg-danger-600 hover:bg-danger-500 disabled:bg-neutral-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-200 disabled:cursor-not-allowed"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-                  <div className="relative flex items-center justify-center space-x-2">
+                  <div className="flex items-center justify-center space-x-2">
                     <TrendingDown className="w-6 h-6" />
-                    <span className="text-lg tracking-wide">LOSS</span>
+                    <span className="text-lg">LOSS</span>
                   </div>
                 </button>
               </div>
@@ -456,10 +441,8 @@ export const TradeRegistration: React.FC = () => {
           </div>
 
           {/* Histórico do Dia */}
-          <div className="bg-gradient-to-br from-neutral-900/60 via-neutral-800/40 to-neutral-900/60 backdrop-blur-xl border border-neutral-700/50 rounded-xl p-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none rounded-xl" />
-            
-            <div className="relative">
+          <div className="bg-neutral-900/80 border border-neutral-700/50 rounded-xl p-8">
+            <div>
               <h2 className="text-xl font-bold text-white mb-6 tracking-tight">Histórico do Dia</h2>
               
               {dailyTrades.length === 0 ? (
@@ -622,10 +605,8 @@ export const TradeRegistration: React.FC = () => {
       {/* Modal do Diário */}
       {isDiaryModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gradient-to-br from-neutral-900/90 via-neutral-800/90 to-neutral-900/90 backdrop-blur-xl border border-neutral-700/50 rounded-xl p-6 w-full max-w-md">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none rounded-xl" />
-            
-            <div className="relative">
+          <div className="bg-neutral-900/95 border border-neutral-700/50 rounded-xl p-6 w-full max-w-md">
+            <div>
               <h3 className="text-lg font-bold text-white mb-4 tracking-tight">Diário do Dia</h3>
               
               <textarea

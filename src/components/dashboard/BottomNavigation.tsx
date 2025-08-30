@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, ClockIcon } from 'lucide-react';
+import { LayoutDashboard, ClockIcon, Settings } from 'lucide-react';
 
 interface BottomNavigationProps {
   activeTab?: string;
@@ -25,6 +25,12 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       icon: ClockIcon,
       label: 'Histórico',
       action: () => navigate('/history')
+    },
+    {
+      id: 'settings',
+      icon: Settings,
+      label: 'Configurações',
+      action: () => navigate('/settings')
     }
   ];
 

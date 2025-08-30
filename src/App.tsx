@@ -6,6 +6,7 @@ import { Login, SignUp, TradeRegistration } from './pages'
 import Dashboard from './pages/Dashboard';
 import SorosSimulation from './pages/SorosSimulation'
 import HistoryPage from './pages/HistoryPage'
+import SettingsPage from './pages/SettingsPage'
 import { LoadingSpinner, AccountBlockedAlert } from './components/ui'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import AuthConfirm from './components/AuthConfirm'
@@ -96,6 +97,16 @@ const AppContent: React.FC = () => {
             <ProtectedRoute>
               <ErrorBoundary>
                 <HistoryPage />
+              </ErrorBoundary>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <ErrorBoundary>
+                <SettingsPage />
               </ErrorBoundary>
             </ProtectedRoute>
           }
