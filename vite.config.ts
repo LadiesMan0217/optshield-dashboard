@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/optshield-dashboard/',
+  base: '/Trading-Shield/',
   resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
